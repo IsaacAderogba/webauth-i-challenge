@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const controller = require("./controllers");
-const { validCreateUser, validUserAuthed } = require("./middleware");
+const { validUserBody, validUserAuthed, validUserLogin } = require("./middleware");
 
 router.get("/users", validUserAuthed, async (req, res, next) => {
   try {
@@ -13,7 +13,7 @@ router.get("/users", validUserAuthed, async (req, res, next) => {
   }
 });
 
-router.post("/users/register", validCreateUser, async (req, res, next) => {
+router.post("/users/register", validUserBody, async (req, res, next) => {
   try {
     const createdUser = await controller.postUser(req.newUser);
     res.status(201).json(createdUser);
@@ -21,5 +21,13 @@ router.post("/users/register", validCreateUser, async (req, res, next) => {
     next(err);
   }
 });
+
+router.post('/users/login', validUserLogin, async (req, res, next) => {
+  try {
+    res.status(200).json({message: "success"});
+  } catch (err) {
+    next(err);
+  }
+})
 
 module.exports = router;
