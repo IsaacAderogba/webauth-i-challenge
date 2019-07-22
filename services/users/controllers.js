@@ -7,6 +7,9 @@ module.exports = {
   getUserById: async function(id) {
     return await Users.findUserById(id);
   },
+  getUserByFilter: async function(filter) {
+    return await Users.findUserByFilter(filter);
+  },
   postUser: async function(user) {
     return await Users.insertUser(user);
   }

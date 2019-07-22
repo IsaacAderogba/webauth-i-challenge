@@ -9,6 +9,11 @@ module.exports = {
       .where({ id })
       .first();
   },
+  findUserByFilter: function(filter) {
+    return db("users")
+      .where(filter)
+      .first();
+  },
   insertUser: function(user) {
     return db("users")
       .insert(user)
