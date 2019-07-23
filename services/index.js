@@ -3,10 +3,6 @@ const express = require("express");
 const router = express.Router();
 
 const usersService = require('./users');
-const { validUserAuthed } = require('./users/middleware');
-
-// global middleware - executed first
-router.use("/api/restricted", validUserAuthed);
 
 router.get("/api", (req, res, next) => {
   try {
@@ -18,7 +14,6 @@ router.get("/api", (req, res, next) => {
 
 router.use('/api', usersService);
 
-// error middleware - executed last
 router.use((err, req, res, next) => {
   res.status(500).json({ message: err.message, stack: err.stack });
 });

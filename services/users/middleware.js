@@ -17,26 +17,11 @@ module.exports = {
     next();
   },
   validUserAuthed: async function(req, res, next) {
-    const { username, password } = req.headers;
-
-    if (!username || !password) {
-      return res
-        .status(401)
-        .json({ message: "Missing username or password in header" });
-    }
-
-    try {
-      controller.getUserByFilter({ username }).then(user => {
-        if (user && bcrypt.compareSync(password, user.password)) {
-          next();
-        } else {
-          res
-            .status(401)
-            .json({ message: "Username and password not authorised" });
-        }
-      });
-    } catch (err) {
-      next(err);
+    console.log(req.session.user);
+    if (req.session && req.session.user) {
+      next();
+    } else {
+      res.status(401).json({ message: "Not authorised" });
     }
   },
   validUserLogin: async function(req, res, next) {
@@ -51,6 +36,7 @@ module.exports = {
     try {
       controller.getUserByFilter({ username }).then(user => {
         if (user && bcrypt.compareSync(password, user.password)) {
+          req.session.user = user;
           next();
         } else {
           res
@@ -77,29 +63,6 @@ module.exports = {
     req.newUser = { username, password };
     next();
   },
-  validUserAuthedWithIcrypt: async function(req, res, next) {
-    const { username, password } = req.headers;
-
-    if (!username || !password) {
-      return res
-        .status(401)
-        .json({ message: "Missing username or password in header" });
-    }
-
-    try {
-      controller.getUserByFilter({ username }).then(user => {
-        if (user && icrypt.comparePass(password, user.password)) {
-          next();
-        } else {
-          res
-            .status(401)
-            .json({ message: "Username and password not authorised" });
-        }
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
   validUserLoginWithIcrypt: async function(req, res, next) {
     let { username, password } = req.body;
 
@@ -112,6 +75,7 @@ module.exports = {
     try {
       controller.getUserByFilter({ username }).then(user => {
         if (user && icrypt.hashPass(password, user.password)) {
+          req.session.user = user;
           next();
         } else {
           res
